@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { collection, addDoc, getDocs } from "@firebase/firestore"; // Perbarui ini
+import { collection, addDoc } from "@firebase/firestore"; // Perbarui ini
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
