@@ -77,7 +77,7 @@ const ProjectStats = ({ project }) => {
             {techStackCount}
           </div>
           <div className="text-[10px] md:text-xs text-gray-400">
-            Total Teknologi
+            Total Technologies
           </div>
         </div>
       </div>
@@ -94,7 +94,7 @@ const ProjectStats = ({ project }) => {
             {featuresCount}
           </div>
           <div className="text-[10px] md:text-xs text-gray-400">
-            Fitur Utama
+            Main Feature
           </div>
         </div>
       </div>
