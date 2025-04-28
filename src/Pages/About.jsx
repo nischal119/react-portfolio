@@ -1,4 +1,4 @@
-import React, { useEffect, memo, useMemo } from "react";
+import React, { useEffect, memo, useMemo, useState } from "react";
 import {
   FileText,
   Code,
@@ -124,6 +124,9 @@ const StatCard = memo(
 );
 
 const AboutPage = () => {
+  // Add state to track data updates
+  const [dataUpdateCount, setDataUpdateCount] = useState(0);
+
   // Memoized calculations
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
     const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
@@ -146,6 +149,16 @@ const AboutPage = () => {
       totalCertificates: storedCertificates.length,
       YearExperience: experience,
     };
+  }, [dataUpdateCount]); // Add dependency on dataUpdateCount
+
+  // Add effect to listen for storage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setDataUpdateCount((prev) => prev + 1);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Optimized AOS initialization
