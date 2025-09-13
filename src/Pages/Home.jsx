@@ -221,8 +221,7 @@ const Home = () => {
                   data-aos="fade-up"
                   data-aos-delay="1000"
                 >
-                  Full Stack Developer with a passion for building scalable web
-                  applications.
+                  Co-Founder at Garud Labs and Babal Cloud
                 </p>
 
                 {/* Tech Stack */}

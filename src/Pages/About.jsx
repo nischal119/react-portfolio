@@ -241,9 +241,23 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-              I take great pride in my work and strive to provide the highest
-              quality services to all of my clients.I will handle your projects
-              with the utmost care and professionalism.
+              I am Co-Founder at{" "}
+              <a
+                href="https://babalcloud.com"
+                className="text-[#a855f7] underline"
+                target="_blank"
+              >
+                Babal Cloud
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://garudlabs.com"
+                className="text-[#a855f7] underline"
+                target="_blank"
+              >
+                Garud Labs
+              </a>
+              . Also I am a full stack App and Web Developer.
             </p>
 
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
