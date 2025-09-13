@@ -223,7 +223,10 @@ const AboutPage = () => {
 
       <div className="w-full mx-auto pt-8 sm:pt-12 relative">
         <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <article className="space-y-6 text-center lg:text-left" aria-label="About me content">
+          <article
+            className="space-y-6 text-center lg:text-left"
+            aria-label="About me content"
+          >
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold"
               data-aos="fade-right"
@@ -265,7 +268,10 @@ const AboutPage = () => {
               . Also I am a full stack App and Web Developer.
             </p>
 
-            <nav className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full" aria-label="Navigation to projects">
+            <nav
+              className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full"
+              aria-label="Navigation to projects"
+            >
               <a href="#Portofolio" className="w-full lg:w-auto">
                 <button
                   data-aos="fade-up"
@@ -282,8 +288,15 @@ const AboutPage = () => {
           <ProfileImage />
         </div>
 
-        <a href="#Portofolio" aria-label="View detailed statistics and projects">
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer" role="region" aria-label="Professional statistics and achievements">
+        <a
+          href="#Portofolio"
+          aria-label="View detailed statistics and projects"
+        >
+          <section
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer"
+            role="region"
+            aria-label="Professional statistics and achievements"
+          >
             {statsData.map((stat) => (
               <StatCard key={stat.label} {...stat} />
             ))}
