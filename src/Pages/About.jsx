@@ -249,7 +249,7 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-              I am Co-Founder at{" "}
+              I am Co-Founder at :{" "}
               <a
                 href="https://babalcloud.com"
                 className="text-[#a855f7] underline"
