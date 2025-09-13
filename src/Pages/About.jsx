@@ -277,7 +277,7 @@ const AboutPage = () => {
                 </button>
               </a>
             </nav>
-          </div>
+          </article>
 
           <ProfileImage />
         </div>
