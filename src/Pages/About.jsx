@@ -2,6 +2,7 @@ import React, { useEffect, memo, useMemo, useState } from "react";
 import { Code, Award, Globe, ArrowUpRight, Sparkles } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import ImageOptimized from "../components/ImageOptimized";
 
 // Memoized Components
 const Header = memo(() => (
@@ -45,11 +46,13 @@ const ProfileImage = memo(() => (
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 z-10 transition-opacity duration-700 group-hover:opacity-0 hidden sm:block" />
           <div className="absolute inset-0 bg-gradient-to-t from-purple-500/20 via-transparent to-blue-500/20 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 hidden sm:block" />
 
-          <img
+          <ImageOptimized
             src="/Nischal.jpg"
-            alt="Profile"
+            alt="Nischal Dhungel - Full Stack Developer and Co-Founder at Garud Labs and Babal Cloud"
             className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
-            loading="lazy"
+            width={320}
+            height={320}
+            loading="eager"
           />
 
           {/* Advanced hover effects - desktop only */}
@@ -210,15 +213,17 @@ const AboutPage = () => {
   );
 
   return (
-    <div
+    <section
       className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0"
       id="About"
+      role="region"
+      aria-label="About Nischal Dhungel - Professional background and experience"
     >
       <Header />
 
       <div className="w-full mx-auto pt-8 sm:pt-12 relative">
         <div className="flex flex-col-reverse lg:grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          <div className="space-y-6 text-center lg:text-left">
+          <article className="space-y-6 text-center lg:text-left" aria-label="About me content">
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold"
               data-aos="fade-right"
@@ -260,28 +265,29 @@ const AboutPage = () => {
               . Also I am a full stack App and Web Developer.
             </p>
 
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full">
+            <nav className="flex flex-col lg:flex-row items-center lg:items-start gap-4 lg:gap-4 lg:px-0 w-full" aria-label="Navigation to projects">
               <a href="#Portofolio" className="w-full lg:w-auto">
                 <button
                   data-aos="fade-up"
                   data-aos-duration="1000"
                   className="w-full lg:w-auto sm:px-6 py-2 sm:py-3 rounded-lg border border-[#a855f7]/50 text-[#a855f7] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center lg:justify-start gap-2 hover:bg-[#a855f7]/10 animate-bounce-slow delay-200"
+                  aria-label="View my portfolio projects"
                 >
                   <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
                 </button>
               </a>
-            </div>
+            </nav>
           </div>
 
           <ProfileImage />
         </div>
 
-        <a href="#Portofolio">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer">
+        <a href="#Portofolio" aria-label="View detailed statistics and projects">
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer" role="region" aria-label="Professional statistics and achievements">
             {statsData.map((stat) => (
               <StatCard key={stat.label} {...stat} />
             ))}
-          </div>
+          </section>
         </a>
       </div>
 
@@ -310,7 +316,7 @@ const AboutPage = () => {
           animation: spin-slower 8s linear infinite;
         }
       `}</style>
-    </div>
+    </section>
   );
 };
 

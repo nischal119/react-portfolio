@@ -190,12 +190,14 @@ export default function FullWidthTabs() {
     : certificates.slice(0, initialItems);
 
   return (
-    <div
+    <section
       className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden"
       id="Portofolio"
+      role="region"
+      aria-label="Portfolio showcase - Projects, certificates, and technical expertise"
     >
       {/* Header section - unchanged */}
-      <div
+      <header
         className="text-center pb-10"
         data-aos="fade-up"
         data-aos-duration="1000"
@@ -219,7 +221,7 @@ export default function FullWidthTabs() {
           expertise. Each section represents a milestone in my continuous
           learning path.
         </p>
-      </div>
+      </header>
 
       <Box sx={{ width: "100%" }}>
         {/* AppBar and Tabs section - unchanged */}
@@ -324,7 +326,7 @@ export default function FullWidthTabs() {
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5" role="region" aria-label="Projects showcase">
                 {displayedProjects.map((project, index) => (
                   <div
                     key={project.id || index}
@@ -352,7 +354,7 @@ export default function FullWidthTabs() {
                     />
                   </div>
                 ))}
-              </div>
+              </section>
             </div>
             {projects.length > initialItems && (
               <div className="mt-6 w-full flex justify-start">
@@ -366,7 +368,7 @@ export default function FullWidthTabs() {
 
           <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+              <section className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4" role="region" aria-label="Certificates showcase">
                 {displayedCertificates.map((certificate, index) => (
                   <div
                     key={index}
@@ -388,7 +390,7 @@ export default function FullWidthTabs() {
                     <Certificate ImgSertif={certificate.Img} />
                   </div>
                 ))}
-              </div>
+              </section>
             </div>
             {certificates.length > initialItems && (
               <div className="mt-6 w-full flex justify-start">
@@ -402,7 +404,7 @@ export default function FullWidthTabs() {
 
           <TabPanel value={value} index={2} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
+              <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5" role="region" aria-label="Technology stack showcase">
                 {techStacks.map((stack, index) => (
                   <div
                     key={index}
@@ -427,11 +429,11 @@ export default function FullWidthTabs() {
                     />
                   </div>
                 ))}
-              </div>
+              </section>
             </div>
           </TabPanel>
         </SwipeableViews>
       </Box>
-    </div>
+    </section>
   );
 }

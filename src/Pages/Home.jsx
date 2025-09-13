@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
+import PropTypes from "prop-types";
 import {
   Github,
   Linkedin,
@@ -29,6 +30,7 @@ const StatusBadge = memo(() => (
     </div>
   </div>
 ));
+StatusBadge.displayName = 'StatusBadge';
 
 const MainTitle = memo(() => (
   <div className="space-y-2" data-aos="fade-up" data-aos-delay="600">
@@ -49,12 +51,17 @@ const MainTitle = memo(() => (
     </h1>
   </div>
 ));
+MainTitle.displayName = 'MainTitle';
 
 const TechStack = memo(({ tech }) => (
   <div className="px-4 py-2 hidden sm:block rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-colors">
     {tech}
   </div>
 ));
+TechStack.displayName = 'TechStack';
+TechStack.propTypes = {
+  tech: PropTypes.string.isRequired,
+};
 
 const CTAButton = memo(({ href, text, icon: Icon }) => (
   <a href={href}>
@@ -78,6 +85,12 @@ const CTAButton = memo(({ href, text, icon: Icon }) => (
     </button>
   </a>
 ));
+CTAButton.displayName = 'CTAButton';
+CTAButton.propTypes = {
+  href: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  icon: PropTypes.elementType.isRequired,
+};
 
 const SocialLink = memo(({ icon: Icon, link }) => (
   <a href={link} target="_blank" rel="noopener noreferrer">
@@ -89,6 +102,11 @@ const SocialLink = memo(({ icon: Icon, link }) => (
     </button>
   </a>
 ));
+SocialLink.displayName = 'SocialLink';
+SocialLink.propTypes = {
+  icon: PropTypes.elementType.isRequired,
+  link: PropTypes.string.isRequired,
+};
 
 // Constants
 const TYPING_SPEED = 100;
@@ -165,7 +183,7 @@ const Home = () => {
       isTyping ? TYPING_SPEED : ERASING_SPEED
     );
     return () => clearTimeout(timeout);
-  }, [handleTyping]);
+  }, [handleTyping, isTyping]);
 
   // Lottie configuration
   const lottieOptions = {
@@ -185,7 +203,7 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#030014] overflow-hidden" id="Home">
+    <main className="min-h-screen bg-[#030014] overflow-hidden" id="Home" role="main" aria-label="Home section - Nischal Dhungel Full Stack Developer">
       <div
         className={`relative z-10 transition-all duration-1000 ${
           isLoaded ? "opacity-100" : "opacity-0"
@@ -194,10 +212,11 @@ const Home = () => {
         <div className="container mx-auto px-[5%] sm:px-6 lg:px-[0%] min-h-screen">
           <div className="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
             {/* Left Column */}
-            <div
+            <section
               className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1 lg:mt-0"
               data-aos="fade-right"
               data-aos-delay="200"
+              aria-label="Introduction and contact information"
             >
               <div className="space-y-4 sm:space-y-6">
                 <StatusBadge />
@@ -220,8 +239,9 @@ const Home = () => {
                   className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
                   data-aos="fade-up"
                   data-aos-delay="1000"
+                  aria-label="Professional background and current role"
                 >
-                  Co-Founder at Garud Labs and Babal Cloud
+                  Co-Founder at Garud Labs and Babal Cloud - Building innovative technology solutions and cloud infrastructure services.
                 </p>
 
                 {/* Tech Stack */}
@@ -229,6 +249,8 @@ const Home = () => {
                   className="flex flex-wrap gap-3 justify-start"
                   data-aos="fade-up"
                   data-aos-delay="1200"
+                  role="list"
+                  aria-label="Technologies and skills"
                 >
                   {TECH_STACK.map((tech, index) => (
                     <TechStack key={index} tech={tech} />
@@ -236,10 +258,12 @@ const Home = () => {
                 </div>
 
                 {/* CTA Buttons */}
-                <div
+                <nav
                   className="flex flex-row gap-3 w-full justify-start"
                   data-aos="fade-up"
                   data-aos-delay="1400"
+                  role="navigation"
+                  aria-label="Main navigation"
                 >
                   <CTAButton
                     href="#Portofolio"
@@ -247,28 +271,31 @@ const Home = () => {
                     icon={ExternalLink}
                   />
                   <CTAButton href="#Contact" text="Contact" icon={Mail} />
-                </div>
+                </nav>
 
                 {/* Social Links */}
                 <div
                   className="hidden sm:flex gap-4 justify-start"
                   data-aos="fade-up"
                   data-aos-delay="1600"
+                  role="list"
+                  aria-label="Social media links"
                 >
                   {SOCIAL_LINKS.map((social, index) => (
                     <SocialLink key={index} {...social} />
                   ))}
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Right Column - Optimized Lottie Animation */}
-            <div
+            <aside
               className="w-full py-[10%] sm:py-0 lg:w-1/2 h-auto lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2 mt-8 lg:mt-0"
               onMouseEnter={() => setIsHovering(true)}
               onMouseLeave={() => setIsHovering(false)}
               data-aos="fade-left"
               data-aos-delay="600"
+              aria-label="Interactive animation showcasing development work"
             >
               <div className="relative w-full opacity-90">
                 <div
@@ -297,11 +324,11 @@ const Home = () => {
                   ></div>
                 </div>
               </div>
-            </div>
+            </aside>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
