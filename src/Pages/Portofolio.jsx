@@ -326,7 +326,11 @@ export default function FullWidthTabs() {
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5" role="region" aria-label="Projects showcase">
+              <section
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5"
+                role="region"
+                aria-label="Projects showcase"
+              >
                 {displayedProjects.map((project, index) => (
                   <div
                     key={project.id || index}
@@ -368,7 +372,11 @@ export default function FullWidthTabs() {
 
           <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
-              <section className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4" role="region" aria-label="Certificates showcase">
+              <section
+                className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4"
+                role="region"
+                aria-label="Certificates showcase"
+              >
                 {displayedCertificates.map((certificate, index) => (
                   <div
                     key={index}
@@ -404,7 +412,11 @@ export default function FullWidthTabs() {
 
           <TabPanel value={value} index={2} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
-              <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5" role="region" aria-label="Technology stack showcase">
+              <section
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5"
+                role="region"
+                aria-label="Technology stack showcase"
+              >
                 {techStacks.map((stack, index) => (
                   <div
                     key={index}

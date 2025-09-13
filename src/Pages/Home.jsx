@@ -30,7 +30,7 @@ const StatusBadge = memo(() => (
     </div>
   </div>
 ));
-StatusBadge.displayName = 'StatusBadge';
+StatusBadge.displayName = "StatusBadge";
 
 const MainTitle = memo(() => (
   <div className="space-y-2" data-aos="fade-up" data-aos-delay="600">
@@ -51,14 +51,14 @@ const MainTitle = memo(() => (
     </h1>
   </div>
 ));
-MainTitle.displayName = 'MainTitle';
+MainTitle.displayName = "MainTitle";
 
 const TechStack = memo(({ tech }) => (
   <div className="px-4 py-2 hidden sm:block rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-gray-300 hover:bg-white/10 transition-colors">
     {tech}
   </div>
 ));
-TechStack.displayName = 'TechStack';
+TechStack.displayName = "TechStack";
 TechStack.propTypes = {
   tech: PropTypes.string.isRequired,
 };
@@ -85,7 +85,7 @@ const CTAButton = memo(({ href, text, icon: Icon }) => (
     </button>
   </a>
 ));
-CTAButton.displayName = 'CTAButton';
+CTAButton.displayName = "CTAButton";
 CTAButton.propTypes = {
   href: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
@@ -102,7 +102,7 @@ const SocialLink = memo(({ icon: Icon, link }) => (
     </button>
   </a>
 ));
-SocialLink.displayName = 'SocialLink';
+SocialLink.displayName = "SocialLink";
 SocialLink.propTypes = {
   icon: PropTypes.elementType.isRequired,
   link: PropTypes.string.isRequired,
@@ -203,7 +203,12 @@ const Home = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[#030014] overflow-hidden" id="Home" role="main" aria-label="Home section - Nischal Dhungel Full Stack Developer">
+    <main
+      className="min-h-screen bg-[#030014] overflow-hidden"
+      id="Home"
+      role="main"
+      aria-label="Home section - Nischal Dhungel Full Stack Developer"
+    >
       <div
         className={`relative z-10 transition-all duration-1000 ${
           isLoaded ? "opacity-100" : "opacity-0"
@@ -241,7 +246,8 @@ const Home = () => {
                   data-aos-delay="1000"
                   aria-label="Professional background and current role"
                 >
-                  Co-Founder at Garud Labs and Babal Cloud - Building innovative technology solutions and cloud infrastructure services.
+                  Co-Founder at Garud Labs and Babal Cloud - Building innovative
+                  technology solutions and cloud infrastructure services.
                 </p>
 
                 {/* Tech Stack */}

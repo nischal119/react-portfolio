@@ -48,17 +48,20 @@ src/
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/your-username/portfolio-v5.git
 cd portfolio-v5
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 # Create .env file
 cp .env.example .env
@@ -66,6 +69,7 @@ cp .env.example .env
 ```
 
 4. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -82,6 +86,7 @@ npm run dev
 ### SEO Configuration
 
 The SEO component (`src/components/SEO.jsx`) includes:
+
 - Meta tags for search engines
 - Open Graph tags for social media
 - Twitter Card tags

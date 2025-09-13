@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const ImageOptimized = ({ 
-  src, 
-  alt, 
-  className = '', 
-  loading = 'lazy',
+const ImageOptimized = ({
+  src,
+  alt,
+  className = "",
+  loading = "lazy",
   width,
   height,
-  ...props 
+  ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -27,7 +27,7 @@ const ImageOptimized = ({
           <div className="w-8 h-8 border-2 border-gray-600 border-t-blue-500 rounded-full animate-spin"></div>
         </div>
       )}
-      
+
       {hasError ? (
         <div className="absolute inset-0 bg-gray-800 flex items-center justify-center">
           <span className="text-gray-500 text-sm">Image failed to load</span>
@@ -42,7 +42,7 @@ const ImageOptimized = ({
           onLoad={handleLoad}
           onError={handleError}
           className={`transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
+            isLoaded ? "opacity-100" : "opacity-0"
           } ${className}`}
           {...props}
         />

@@ -16,7 +16,7 @@ import { AnimatePresence } from "framer-motion";
 const LandingPage = ({ showWelcome, setShowWelcome }) => {
   return (
     <>
-      <SEO 
+      <SEO
         title="Nischal Dhungel - Full Stack Developer & Software Engineer"
         description="Experienced Full Stack Developer specializing in React, Node.js, and modern web technologies. Building innovative digital solutions and web applications with expertise in JavaScript, Python, and cloud technologies."
         keywords="Full Stack Developer, React Developer, Node.js, JavaScript, Python, Web Development, Software Engineer, Frontend Developer, Backend Developer, Portfolio, Nischal Dhungel"
@@ -55,7 +55,7 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
 
 const ProjectPageLayout = () => (
   <>
-    <SEO 
+    <SEO
       title="Project Details - Nischal Dhungel Portfolio"
       description="Detailed view of my latest projects and development work. Explore the technologies, features, and implementation details of my portfolio projects."
       keywords="Project Details, Portfolio Projects, Web Development Projects, React Projects, Full Stack Projects, Nischal Dhungel"
