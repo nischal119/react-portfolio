@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 import { db, collection } from "../firebase";
-import { getDocs } from "firebase/firestore";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@mui/material/styles";
@@ -120,15 +119,28 @@ const techStacks = [
   { icon: "vercel.svg", language: "Vercel" },
 ];
 
-export default function FullWidthTabs() {
+FullWidthTabs.propTypes = {
+  projectsData: PropTypes.array,
+  certificatesData: PropTypes.array,
+};
+
+export default function FullWidthTabs({ projectsData = [], certificatesData = [] }) {
   const theme = useTheme();
   const [value, setValue] = useState(0);
-  const [projects, setProjects] = useState([]);
-  const [certificates, setCertificates] = useState([]);
+  const [projects, setProjects] = useState(projectsData);
+  const [certificates, setCertificates] = useState(certificatesData);
   const [showAllProjects, setShowAllProjects] = useState(false);
   const [showAllCertificates, setShowAllCertificates] = useState(false);
   const isMobile = window.innerWidth < 768;
   const initialItems = isMobile ? 4 : 6;
+
+  useEffect(() => {
+    setProjects(projectsData);
+  }, [projectsData]);
+
+  useEffect(() => {
+    setCertificates(certificatesData);
+  }, [certificatesData]);
 
   useEffect(() => {
     // Initialize AOS once
@@ -137,38 +149,6 @@ export default function FullWidthTabs() {
     });
   }, []);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const projectCollection = collection(db, "projects");
-      const certificateCollection = collection(db, "certificates");
-
-      const [projectSnapshot, certificateSnapshot] = await Promise.all([
-        getDocs(projectCollection),
-        getDocs(certificateCollection),
-      ]);
-
-      const projectData = projectSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        TechStack: doc.data().TechStack || [],
-      }));
-
-      const certificateData = certificateSnapshot.docs.map((doc) => doc.data());
-      console.log(certificateData);
-      setProjects(projectData);
-      setCertificates(certificateData);
-
-      // Store in localStorage
-      localStorage.setItem("projects", JSON.stringify(projectData));
-      localStorage.setItem("certificates", JSON.stringify(certificateData));
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

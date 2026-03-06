@@ -1,4 +1,4 @@
-import React, { useEffect, memo, useMemo, useState } from "react";
+import React, { useEffect, memo, useMemo } from "react";
 import { Code, Award, Globe, ArrowUpRight, Sparkles } from "lucide-react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -119,17 +119,9 @@ const StatCard = memo(
   )
 );
 
-const AboutPage = () => {
-  // Add state to track data updates
-  const [dataUpdateCount, setDataUpdateCount] = useState(0);
-
+const AboutPage = ({ projects = [], certificates = [] }) => {
   // Memoized calculations
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
-    const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const storedCertificates = JSON.parse(
-      localStorage.getItem("certificates") || "[]"
-    );
-
     const startDate = new Date("2021-11-06");
     const today = new Date();
     const experience =
@@ -141,21 +133,12 @@ const AboutPage = () => {
         : 0);
 
     return {
-      totalProjects: storedProjects.length,
-      totalCertificates: storedCertificates.length,
+      totalProjects: projects.length,
+      totalCertificates: certificates.length,
       YearExperience: experience,
     };
-  }, [dataUpdateCount]); // Add dependency on dataUpdateCount
+  }, [projects, certificates]);
 
-  // Add effect to listen for storage changes
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setDataUpdateCount((prev) => prev + 1);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
 
   // Optimized AOS initialization
   useEffect(() => {

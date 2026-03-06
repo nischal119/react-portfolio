@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Pastikan script dijalankan sebagai root
+
 if [ "$(id -u)" != "0" ]; then
     echo "Script harus dijalankan dengan sudo"
     exit 1

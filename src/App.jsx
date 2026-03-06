@@ -1,5 +1,5 @@
+import React, { useState, useEffect, useCallback } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import Home from "./Pages/Home";
@@ -12,8 +12,10 @@ import ProjectDetails from "./components/ProjectDetail";
 import WelcomeScreen from "./Pages/WelcomeScreen";
 import SEO from "./components/SEO";
 import { AnimatePresence } from "framer-motion";
+import { db, collection } from "./firebase";
+import { getDocs } from "firebase/firestore";
 
-const LandingPage = ({ showWelcome, setShowWelcome }) => {
+const LandingPage = ({ showWelcome, setShowWelcome, projects, certificates }) => {
   return (
     <>
       <SEO
@@ -32,8 +34,8 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
           <Navbar />
           <AnimatedBackground />
           <Home />
-          <About />
-          <Portofolio />
+          <About projects={projects} certificates={certificates} />
+          <Portofolio projectsData={projects} certificatesData={certificates} />
           <ContactPage />
           <footer>
             <center>
@@ -78,6 +80,41 @@ const ProjectPageLayout = () => (
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
+  const [projects, setProjects] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const projectCollection = collection(db, "projects");
+      const certificateCollection = collection(db, "certificates");
+
+      const [projectSnapshot, certificateSnapshot] = await Promise.all([
+        getDocs(projectCollection),
+        getDocs(certificateCollection),
+      ]);
+
+      const projectData = projectSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        TechStack: doc.data().TechStack || [],
+      }));
+
+      const certificateData = certificateSnapshot.docs.map((doc) => doc.data());
+      
+      setProjects(projectData);
+      setCertificates(certificateData);
+
+      // Legacy support for other components still reading from localStorage
+      localStorage.setItem("projects", JSON.stringify(projectData));
+      localStorage.setItem("certificates", JSON.stringify(certificateData));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <HelmetProvider>
@@ -89,6 +126,8 @@ function App() {
               <LandingPage
                 showWelcome={showWelcome}
                 setShowWelcome={setShowWelcome}
+                projects={projects}
+                certificates={certificates}
               />
             }
           />
