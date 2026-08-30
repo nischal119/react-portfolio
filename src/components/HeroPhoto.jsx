@@ -4,9 +4,10 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { PROFILE } from "@/lib/content";
 
+const FLOATING_SIZE_CLASS =
+  "w-[min(42vw,160px)] sm:w-[min(42vw,180px)] md:w-[min(42vw,220px)] xl:w-[400px]";
+
 export default function HeroPhoto({
-  width,
-  height,
   rotateY,
   rotateX,
   scale,
@@ -14,20 +15,17 @@ export default function HeroPhoto({
   className = "",
   style = {},
 }) {
-  const sizeStyle = fill
-    ? { width: "100%", height: "100%" }
-    : { width, height };
-
   return (
     <motion.div
       style={{
-        ...sizeStyle,
         rotateY,
         rotateX,
         scale,
         ...style,
       }}
-      className={`relative [transform-style:preserve-3d] origin-center ${className}`}
+      className={`relative shrink-0 [transform-style:preserve-3d] origin-center ${
+        fill ? "w-full h-full" : `${FLOATING_SIZE_CLASS} aspect-[400/456]`
+      } ${className}`}
     >
       <div className="absolute inset-0 rounded-[20px] overflow-hidden shadow-[0_20px_50px_rgba(17,17,17,0.22)] border border-black/5 [backface-visibility:hidden]">
         <Image

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Mail } from "lucide-react";
 import { PROFILE } from "@/lib/content";
@@ -20,14 +20,18 @@ export default function Hero() {
     photoScale,
     photoRotateY,
     photoRotateX,
-    photoWidth,
-    photoHeight,
     measure,
     reduce,
     photoDocked,
   } = useHeroScroll(wrapperRef, titleBottomRef, photoEndRef);
 
+  const [showFloatingPhoto, setShowFloatingPhoto] = useState(false);
+
   const { handleSectionClick } = useSectionScroll();
+
+  useLayoutEffect(() => {
+    setShowFloatingPhoto(true);
+  }, []);
 
   useEffect(() => {
     const t1 = setTimeout(measure, 50);
@@ -48,10 +52,8 @@ export default function Hero() {
     <section id="home" aria-label="Introduction">
       <div ref={wrapperRef} className="relative h-[200vh]">
         <div className="sticky top-0 h-screen w-full overflow-visible pointer-events-none z-20 flex items-center justify-center [perspective:1200px]">
-          {!photoDocked && (
+          {showFloatingPhoto && !photoDocked && (
             <HeroPhoto
-              width={photoWidth}
-              height={photoHeight}
               rotateY={photoRotateY}
               rotateX={photoRotateX}
               scale={photoScale}
@@ -66,6 +68,14 @@ export default function Hero() {
               <div className="relative">
                 <HeroSparkles />
                 <div className="relative flex flex-col items-center select-none">
+                  <motion.p
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ type: "spring", bounce: 0, duration: 0.7, delay: 0.05 }}
+                    className="font-display font-bold uppercase text-ink text-[clamp(0.875rem,3.8vw,1.5rem)] tracking-[0.12em] mb-3 sm:mb-5"
+                  >
+                    Myself {PROFILE.name} !
+                  </motion.p>
                   <motion.h1
                     initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -134,7 +144,7 @@ export default function Hero() {
               </div>
 
               <div
-                className="order-2 flex justify-center items-center mx-auto w-full max-w-[180px] sm:max-w-[220px] lg:max-w-[400px]"
+                className="order-2 flex justify-center items-center mx-auto w-full max-w-[min(42vw,180px)] sm:max-w-[220px] lg:max-w-[400px]"
               >
                 <div
                   ref={photoEndRef}

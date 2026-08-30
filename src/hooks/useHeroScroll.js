@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   useMotionValue,
   useMotionValueEvent,
@@ -9,14 +9,22 @@ import {
   useTransform,
 } from "framer-motion";
 
-const PHOTO_START_SCALE = 0.5;
+const PHOTO_ASPECT = 456 / 400;
 const PHOTO_START_GAP = 24;
+const PHOTO_START_SCALE = 0.55;
+
+const PHOTO_SIZE_DEFAULT = { w: 160, h: Math.round(160 * PHOTO_ASPECT) };
 
 function getPhotoSize() {
-  if (typeof window === "undefined") return { w: 400, h: 456 };
-  if (window.innerWidth >= 1280) return { w: 400, h: 456 };
-  if (window.innerWidth >= 810) return { w: 220, h: 251 };
-  return { w: 180, h: 205 };
+  if (typeof window === "undefined") return PHOTO_SIZE_DEFAULT;
+
+  const vw = window.innerWidth;
+  if (vw >= 1280) return { w: 400, h: 456 };
+  if (vw >= 810) return { w: 220, h: 251 };
+  if (vw >= 640) return { w: 180, h: 205 };
+
+  const w = Math.round(Math.min(160, vw * 0.4));
+  return { w, h: Math.round(w * PHOTO_ASPECT) };
 }
 
 function clamp(value, min, max) {
@@ -32,7 +40,6 @@ function lerpRange(progress, inputRange, outputRange) {
 
 export function useHeroScroll(wrapperRef, titleBottomRef, photoEndRef) {
   const reduce = useReducedMotion();
-  const [photoSize, setPhotoSize] = useState(getPhotoSize);
   const [photoDocked, setPhotoDocked] = useState(reduce);
   const photoStartY = useMotionValue(120);
   const photoEndY = useMotionValue(0);
@@ -55,34 +62,27 @@ export function useHeroScroll(wrapperRef, titleBottomRef, photoEndRef) {
     photoEndY.set(endY);
   }, [titleBottomRef, photoEndRef, photoStartY, photoEndY]);
 
-  const updatePhotoSize = useCallback(() => {
-    setPhotoSize(getPhotoSize());
-  }, []);
-
   const measure = useCallback(() => {
-    updatePhotoSize();
     measurePositions();
-  }, [updatePhotoSize, measurePositions]);
+  }, [measurePositions]);
+
+  useLayoutEffect(() => {
+    measurePositions();
+  }, [measurePositions]);
 
   useEffect(() => {
-    let rafId = requestAnimationFrame(() => {
-      updatePhotoSize();
-      measurePositions();
-    });
-
     const onResize = () => measure();
-    const onScroll = () => measurePositions();
+    const onScroll = () => measure();
 
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
     document.fonts?.ready?.then(measure);
 
     return () => {
-      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [measure, measurePositions, updatePhotoSize]);
+  }, [measure]);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
@@ -132,8 +132,6 @@ export function useHeroScroll(wrapperRef, titleBottomRef, photoEndRef) {
     photoScale,
     photoRotateY,
     photoRotateX,
-    photoWidth: photoSize.w,
-    photoHeight: photoSize.h,
     measure,
     reduce,
     photoDocked,
