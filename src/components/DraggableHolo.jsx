@@ -54,7 +54,8 @@ export default function DraggableHolo({
           width={size}
           height={size}
           draggable={false}
-          className="w-full h-full object-contain drop-shadow-[0_8px_24px_rgba(91,75,255,0.25)] pointer-events-none bg-transparent"
+          unoptimized
+          className="w-full h-full object-contain drop-shadow-[0_10px_28px_rgba(91,75,255,0.3)] pointer-events-none"
           priority
         />
       </div>
