@@ -40,11 +40,15 @@ export const SOCIAL_LINKS = [
 export const SKILL_GROUPS = [
   {
     title: "Frontend Development",
-    tags: ["React", "Next.js", "Tailwind CSS"],
+    tags: ["React", "Next.js", "React Native", "Tailwind CSS"],
+  },
+  {
+    title: "Mobile & Cross-Platform",
+    tags: ["Flutter", "React Native", "Firebase"],
   },
   {
     title: "Backend & Infrastructure",
-    tags: ["Node.js", "Firebase", "MongoDB"],
+    tags: ["Node.js", "MongoDB", "Firebase", "Stripe"],
   },
   {
     title: "Tools & Platforms",

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Mail } from "lucide-react";
 import { PROFILE } from "@/lib/content";
 import { useHeroScroll } from "@/hooks/useHeroScroll";
+import { useSectionScroll } from "@/hooks/useSectionScroll";
 import HeroSparkles from "./HeroSparkles";
 import HeroIntro from "./HeroIntro";
 import HeroPhoto from "./HeroPhoto";
@@ -25,6 +26,8 @@ export default function Hero() {
     reduce,
     photoDocked,
   } = useHeroScroll(wrapperRef, titleBottomRef, photoEndRef);
+
+  const { handleSectionClick } = useSectionScroll();
 
   useEffect(() => {
     const t1 = setTimeout(measure, 50);
@@ -101,6 +104,7 @@ export default function Hero() {
             <div className="absolute top-20 sm:top-28 right-4 sm:right-12 lg:right-16 flex flex-col gap-2 z-30">
               <a
                 href="#projects"
+                onClick={(e) => handleSectionClick(e, "#projects")}
                 className="group flex items-center gap-1.5 rounded-lg bg-ink text-cream text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 shadow-md active:scale-95 transition-transform"
               >
                 View Projects
@@ -108,6 +112,7 @@ export default function Hero() {
               </a>
               <a
                 href="#contact"
+                onClick={(e) => handleSectionClick(e, "#contact")}
                 className="group flex items-center gap-1.5 rounded-lg border border-ink/15 bg-cream/80 backdrop-blur text-ink text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 active:scale-95 transition-transform"
               >
                 Contact
@@ -121,7 +126,7 @@ export default function Hero() {
             className="relative min-h-screen flex items-center px-4 sm:px-10 lg:px-14 pt-16 sm:pt-24 lg:pt-0 pb-24"
           >
             <div className="w-full max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px_1fr] gap-x-10 gap-y-10 lg:gap-y-0 items-center">
-              <div className="flex flex-col justify-between lg:min-h-[380px] gap-10 sm:gap-16 lg:gap-0 text-center lg:text-left order-1">
+              <div className="flex flex-col gap-4 sm:gap-5 text-center lg:text-left order-1">
                 <h2 className="font-display font-semibold text-ink text-[clamp(2.5rem,8vw,4.75rem)] leading-none tracking-tight">
                   Hey!
                 </h2>
@@ -159,6 +164,7 @@ export default function Hero() {
                 )}
                 <a
                   href="#contact"
+                  onClick={(e) => handleSectionClick(e, "#contact")}
                   className="group inline-flex items-center gap-2 text-ink font-semibold text-sm sm:text-base border-b-2 border-ink pb-0.5 hover:opacity-75 transition-opacity mx-auto lg:mx-0"
                 >
                   {PROFILE.getStarted}

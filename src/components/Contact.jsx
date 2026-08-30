@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, Loader2, ArrowUpRight } from "lucide-react";
+import { Mail } from "lucide-react";
 import Reveal from "./Reveal";
 import { SOCIAL_LINKS } from "@/lib/content";
+import ContactForm from "./contact/ContactForm";
 
 function SocialIcon({ label }) {
   if (label === "GitHub") {
@@ -30,45 +29,13 @@ function SocialIcon({ label }) {
       </svg>
     );
   }
-  if (label === "Twitter") {
-    return (
-      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-      </svg>
-    );
-  }
   return <Mail size={18} />;
 }
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [state, setState] = useState("idle"); // idle | sending | sent | error
-
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setState("sending");
-    try {
-      const res = await fetch("https://formsubmit.co/ajax/dhungeln12@gmail.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setState("sent");
-      setForm({ name: "", email: "", message: "" });
-    } catch {
-      setState("error");
-    }
-  };
-
   return (
     <section id="contact" className="section-padding max-w-[1240px] mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-        {/* Left Column: Heading + Subtitle + Social Boxes */}
         <Reveal className="flex flex-col justify-between h-full">
           <div>
             <h2 className="font-display font-bold text-ink text-[10vw] sm:text-7xl lg:text-8xl tracking-tight mb-6 leading-none">
@@ -79,7 +46,6 @@ export default function Contact() {
             </p>
           </div>
 
-          {/* Social Media Rounded Boxes (matching reference design) */}
           <div className="flex items-center gap-3 pt-4 sm:pt-12">
             {SOCIAL_LINKS.map((link) => (
               <a
@@ -96,89 +62,9 @@ export default function Contact() {
           </div>
         </Reveal>
 
-        {/* Right Column: Dark Card Form (exact match to reference) */}
         <Reveal delay={0.15}>
           <div className="bg-[#111111] text-white rounded-[2.5rem] p-7 sm:p-10 shadow-2xl border border-white/5">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-                  Name
-                </label>
-                <input
-                  required
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  disabled={state === "sending"}
-                  placeholder="Enter your name"
-                  className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm disabled:opacity-50"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-                  Email
-                </label>
-                <input
-                  required
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  disabled={state === "sending"}
-                  placeholder="Enter your email"
-                  className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm disabled:opacity-50"
-                />
-              </div>
-
-              {/* Your Project */}
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-                  Your Project
-                </label>
-                <textarea
-                  required
-                  name="message"
-                  rows={4}
-                  value={form.message}
-                  onChange={handleChange}
-                  disabled={state === "sending"}
-                  placeholder="Tell us about your project"
-                  className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm resize-none min-h-[120px] disabled:opacity-50"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <motion.button
-                type="submit"
-                disabled={state === "sending"}
-                whileTap={{ scale: 0.98 }}
-                className="w-full bg-cream text-ink font-semibold rounded-xl py-3.5 px-6 hover:bg-white active:scale-[0.99] transition-all flex items-center justify-center gap-2 text-sm shadow-md disabled:opacity-60 cursor-pointer"
-              >
-                {state === "sending" ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  <span>Submit</span>
-                )}
-              </motion.button>
-
-              {/* Feedback messages */}
-              {state === "sent" && (
-                <p className="text-sm text-green-400 font-medium text-center pt-2">
-                  Message sent successfully! I&rsquo;ll get back to you soon.
-                </p>
-              )}
-              {state === "error" && (
-                <p className="text-sm text-red-400 font-medium text-center pt-2">
-                  Something went wrong. Please try again or email me directly.
-                </p>
-              )}
-            </form>
+            <ContactForm />
           </div>
         </Reveal>
       </div>

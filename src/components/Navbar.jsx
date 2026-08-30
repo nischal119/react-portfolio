@@ -2,16 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { useLenis } from "lenis/react";
 import { Menu, X } from "lucide-react";
 import { NAV_ITEMS, PROFILE } from "@/lib/content";
+import { useSectionScroll } from "@/hooks/useSectionScroll";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState("home");
   const [hidden, setHidden] = useState(false);
   const lastScrollY = useRef(0);
-  const lenis = useLenis();
+  const { handleSectionClick } = useSectionScroll();
 
   const { scrollY } = useScroll();
 
@@ -56,16 +56,8 @@ export default function Navbar() {
     };
   }, [isOpen]);
 
-  const handleNavClick = (e, href) => {
-    e.preventDefault();
-    const el = document.querySelector(href);
-    if (!el) return;
-
-    if (lenis) {
-      lenis.scrollTo(el, { offset: -24 });
-    } else {
-      window.scrollTo({ top: el.offsetTop - 24, behavior: "smooth" });
-    }
+  const onNavClick = (e, href) => {
+    handleSectionClick(e, href);
     setIsOpen(false);
   };
 
@@ -82,7 +74,7 @@ export default function Navbar() {
       <div className="flex items-center justify-between gap-3 rounded-full bg-ink/90 backdrop-blur-xl border border-white/10 px-2 py-2 pl-5 shadow-[0_8px_30px_rgba(17,17,17,0.15)]">
         <a
           href="#home"
-          onClick={(e) => handleNavClick(e, "#home")}
+          onClick={(e) => onNavClick(e, "#home")}
           className="text-cream font-semibold tracking-tight text-sm sm:text-base"
         >
           {PROFILE.shortName}
@@ -93,7 +85,7 @@ export default function Navbar() {
             <a
               key={item.href}
               href={item.href}
-              onClick={(e) => handleNavClick(e, item.href)}
+              onClick={(e) => onNavClick(e, item.href)}
               className={`relative px-3 py-2 text-sm font-medium rounded-full transition-colors duration-300 ${
                 active === item.href.slice(1)
                   ? "text-ink bg-cream"
@@ -125,7 +117,7 @@ export default function Navbar() {
             <a
               key={item.href}
               href={item.href}
-              onClick={(e) => handleNavClick(e, item.href)}
+              onClick={(e) => onNavClick(e, item.href)}
               className={`block px-4 py-3 rounded-2xl text-sm font-medium transition-colors ${
                 active === item.href.slice(1)
                   ? "text-ink bg-cream"

@@ -48,6 +48,10 @@ export default function DraggableHolo({
           isDragging ? "scale-105 cursor-grabbing" : "cursor-grab"
         }`}
       >
+        <div
+          className="absolute inset-[16%] rounded-[28%] bg-ink/[0.05] border border-ink/[0.08] shadow-[0_6px_20px_rgba(91,75,255,0.1)]"
+          aria-hidden="true"
+        />
         <Image
           src={src}
           alt={alt}
@@ -55,7 +59,7 @@ export default function DraggableHolo({
           height={size}
           draggable={false}
           unoptimized
-          className="w-full h-full object-contain drop-shadow-[0_10px_28px_rgba(91,75,255,0.3)] pointer-events-none"
+          className="relative z-10 w-full h-full object-contain drop-shadow-[0_10px_28px_rgba(91,75,255,0.3)] pointer-events-none"
           priority
         />
       </div>

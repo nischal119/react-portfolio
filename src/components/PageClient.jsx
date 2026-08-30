@@ -3,6 +3,7 @@
 import { usePortfolioData } from "@/hooks/usePortfolioData";
 import SmoothScroll from "./SmoothScroll";
 import ScrollProgress from "./ScrollProgress";
+import BackToTop from "./BackToTop";
 import Navbar from "./Navbar";
 import Hero from "./Hero";
 import Mission from "./Mission";
@@ -19,6 +20,7 @@ export default function PageClient() {
     <SmoothScroll>
       <div className="relative w-full min-h-screen bg-cream selection:bg-accent selection:text-cream">
         <ScrollProgress />
+        <BackToTop />
         <Navbar />
         <main className="w-full">
           <Hero />
