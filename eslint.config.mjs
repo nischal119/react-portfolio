@@ -10,6 +10,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local legacy / tooling
+    "_legacy-vite/**",
+    "portfolio-next/**",
+    ".venv-img/**",
+    "scripts/**",
   ]),
 ]);
 

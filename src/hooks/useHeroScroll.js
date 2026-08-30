@@ -37,9 +37,8 @@ export function useHeroScroll(wrapperRef, titleBottomRef, photoEndRef) {
   const photoStartY = useMotionValue(120);
   const photoEndY = useMotionValue(0);
 
-  const measure = useCallback(() => {
+  const measurePositions = useCallback(() => {
     if (typeof window === "undefined") return;
-    setPhotoSize(getPhotoSize());
     if (!titleBottomRef.current || !photoEndRef.current) return;
 
     const { h: photoH } = getPhotoSize();
@@ -56,20 +55,34 @@ export function useHeroScroll(wrapperRef, titleBottomRef, photoEndRef) {
     photoEndY.set(endY);
   }, [titleBottomRef, photoEndRef, photoStartY, photoEndY]);
 
+  const updatePhotoSize = useCallback(() => {
+    setPhotoSize(getPhotoSize());
+  }, []);
+
+  const measure = useCallback(() => {
+    updatePhotoSize();
+    measurePositions();
+  }, [updatePhotoSize, measurePositions]);
+
   useEffect(() => {
-    measure();
+    let rafId = requestAnimationFrame(() => {
+      updatePhotoSize();
+      measurePositions();
+    });
+
     const onResize = () => measure();
-    const onScroll = () => measure();
+    const onScroll = () => measurePositions();
 
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onScroll, { passive: true });
     document.fonts?.ready?.then(measure);
 
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [measure]);
+  }, [measure, measurePositions, updatePhotoSize]);
 
   const { scrollYProgress } = useScroll({
     target: wrapperRef,
