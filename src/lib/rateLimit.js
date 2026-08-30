@@ -1,5 +1,5 @@
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_MAX = 15;
 
 const hits = new Map();
 
