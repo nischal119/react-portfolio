@@ -6,7 +6,7 @@ const MIN_SUBMIT_MS = 3000;
 
 function isValidPhone(value) {
   const digits = value.replace(/\D/g, "");
-  return digits.length >= 7 && digits.length <= 15;
+  return digits.length === 10;
 }
 
 export async function POST(request) {
@@ -50,7 +50,7 @@ export async function POST(request) {
   }
 
   if (!isValidPhone(phone)) {
-    return NextResponse.json({ error: "Invalid phone number." }, { status: 400 });
+    return NextResponse.json({ error: "Phone number must be exactly 10 digits." }, { status: 400 });
   }
 
   try {

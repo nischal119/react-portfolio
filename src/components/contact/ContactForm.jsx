@@ -3,11 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import {
+  hasContactErrors,
+  sanitizePhoneInput,
+  validateContactForm,
+} from "@/lib/contactValidation";
+import { FormField, getFieldClass } from "./FormField";
 
 const INITIAL_FORM = { name: "", email: "", phone: "", message: "" };
+const INITIAL_TOUCHED = { name: false, email: false, phone: false, message: false };
 
 export default function ContactForm() {
   const [form, setForm] = useState(INITIAL_FORM);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState(INITIAL_TOUCHED);
   const [state, setState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const formLoadedAt = useRef(null);
@@ -16,12 +25,55 @@ export default function ContactForm() {
     formLoadedAt.current = Date.now();
   }, []);
 
+  const validateField = (name, values) => {
+    const fieldErrors = validateContactForm(values);
+    setErrors((prev) => {
+      const next = { ...prev };
+      if (fieldErrors[name]) {
+        next[name] = fieldErrors[name];
+      } else {
+        delete next[name];
+      }
+      return next;
+    });
+  };
+
   const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    const nextValue = name === "phone" ? sanitizePhoneInput(value) : value;
+    const nextForm = { ...form, [name]: nextValue };
+    setForm(nextForm);
+    setErrorMessage("");
+
+    if (touched[name]) {
+      validateField(name, nextForm);
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    validateField(name, form);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = validateContactForm(form);
+    setErrors(validationErrors);
+    setTouched({
+      name: true,
+      email: true,
+      phone: true,
+      message: true,
+    });
+
+    if (hasContactErrors(validationErrors)) {
+      setState("idle");
+      setErrorMessage("Please fix the highlighted fields.");
+      return;
+    }
+
     setState("sending");
     setErrorMessage("");
 
@@ -47,6 +99,8 @@ export default function ContactForm() {
 
       setState("sent");
       setForm(INITIAL_FORM);
+      setErrors({});
+      setTouched(INITIAL_TOUCHED);
       formLoadedAt.current = Date.now();
     } catch (error) {
       setState("error");
@@ -57,7 +111,7 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       <input
         type="text"
         name="website"
@@ -67,69 +121,81 @@ export default function ContactForm() {
         aria-hidden="true"
       />
 
-      <div>
-        <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-          Name
-        </label>
-        <input
-          required
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          disabled={state === "sending"}
-          placeholder="Enter your name"
-          className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm disabled:opacity-50"
-        />
-      </div>
+      <FormField id="name" label="Name" error={errors.name} touched={touched.name}>
+        {(showError) => (
+          <input
+            id="name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={state === "sending"}
+            placeholder="Enter your name"
+            aria-invalid={showError}
+            aria-describedby={showError ? "name-error" : undefined}
+            className={getFieldClass(showError)}
+          />
+        )}
+      </FormField>
 
-      <div>
-        <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-          Email
-        </label>
-        <input
-          required
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          disabled={state === "sending"}
-          placeholder="Enter your email"
-          className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm disabled:opacity-50"
-        />
-      </div>
+      <FormField id="email" label="Email" error={errors.email} touched={touched.email}>
+        {(showError) => (
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={state === "sending"}
+            placeholder="Enter your email"
+            autoComplete="email"
+            aria-invalid={showError}
+            aria-describedby={showError ? "email-error" : undefined}
+            className={getFieldClass(showError)}
+          />
+        )}
+      </FormField>
 
-      <div>
-        <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-          Phone Number
-        </label>
-        <input
-          required
-          type="tel"
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-          disabled={state === "sending"}
-          placeholder="Enter your phone number"
-          inputMode="tel"
-          className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm disabled:opacity-50"
-        />
-      </div>
+      <FormField id="phone" label="Phone Number" error={errors.phone} touched={touched.phone}>
+        {(showError) => (
+          <input
+            id="phone"
+            type="text"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={state === "sending"}
+            placeholder="Enter your 10-digit phone number"
+            inputMode="numeric"
+            pattern="[0-9]{10}"
+            maxLength={10}
+            autoComplete="tel"
+            aria-invalid={showError}
+            aria-describedby={showError ? "phone-error" : undefined}
+            className={getFieldClass(showError)}
+          />
+        )}
+      </FormField>
 
-      <div>
-        <label className="block text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">
-          Your Project
-        </label>
-        <textarea
-          required
-          name="message"
-          rows={4}
-          value={form.message}
-          onChange={handleChange}
-          disabled={state === "sending"}
-          placeholder="Tell us about your project"
-          className="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-white/30 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all text-sm resize-none min-h-[120px] disabled:opacity-50"
-        />
-      </div>
+      <FormField id="message" label="Your Project" error={errors.message} touched={touched.message}>
+        {(showError) => (
+          <textarea
+            id="message"
+            name="message"
+            rows={4}
+            value={form.message}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={state === "sending"}
+            placeholder="Tell us about your project"
+            aria-invalid={showError}
+            aria-describedby={showError ? "message-error" : undefined}
+            className={`${getFieldClass(showError)} resize-none min-h-[120px]`}
+          />
+        )}
+      </FormField>
 
       <motion.button
         type="submit"
@@ -148,13 +214,18 @@ export default function ContactForm() {
       </motion.button>
 
       {state === "sent" && (
-        <p className="text-sm text-green-400 font-medium text-center pt-2">
+        <p className="text-sm text-green-400 font-medium text-center pt-2" role="status">
           Message sent successfully! I&rsquo;ll get back to you soon.
         </p>
       )}
       {state === "error" && (
-        <p className="text-sm text-red-400 font-medium text-center pt-2">
+        <p className="text-sm text-red-400 font-medium text-center pt-2" role="alert">
           {errorMessage || "Something went wrong. Please try again or email me directly."}
+        </p>
+      )}
+      {state !== "error" && errorMessage && hasContactErrors(errors) && (
+        <p className="text-sm text-red-400 font-medium text-center pt-2" role="alert">
+          {errorMessage}
         </p>
       )}
     </form>
