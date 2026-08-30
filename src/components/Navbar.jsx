@@ -1,180 +1,142 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { useLenis } from "lenis/react";
 import { Menu, X } from "lucide-react";
+import { NAV_ITEMS, PROFILE } from "@/lib/content";
 
-const Navbar = () => {
+export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("Home");
+  const [active, setActive] = useState("home");
+  const [hidden, setHidden] = useState(false);
+  const lastScrollY = useRef(0);
+  const lenis = useLenis();
 
-  const navItems = [
-    { href: "#Home", label: "Home" },
-    { href: "#About", label: "About" },
-    { href: "#Portofolio", label: "Portofolio" },
-    { href: "#Contact", label: "Contact" },
-  ];
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const diff = latest - lastScrollY.current;
+    if (latest < 80) {
+      setHidden(false);
+    } else if (diff > 8) {
+      setHidden(true);
+    } else if (diff < -8) {
+      setHidden(false);
+    }
+    lastScrollY.current = latest;
+  });
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-      const sections = navItems
-        .map((item) => {
-          const section = document.querySelector(item.href);
-          if (section) {
-            return {
-              id: item.href.replace("#", ""),
-              offset: section.offsetTop - 550,
-              height: section.offsetHeight,
-            };
+    const sections = NAV_ITEMS.map((item) => item.href.slice(1));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
           }
-          return null;
-        })
-        .filter(Boolean);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
+    );
 
-      const currentPosition = window.scrollY;
-      const active = sections.find(
-        (section) =>
-          currentPosition >= section.offset &&
-          currentPosition < section.offset + section.height
-      );
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
 
-      if (active) {
-        setActiveSection(active.id);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
-  const scrollToSection = (e, href) => {
+  const handleNavClick = (e, href) => {
     e.preventDefault();
-    const section = document.querySelector(href);
-    if (section) {
-      const top = section.offsetTop - 100;
-      window.scrollTo({
-        top: top,
-        behavior: "smooth",
-      });
+    const el = document.querySelector(href);
+    if (!el) return;
+
+    if (lenis) {
+      lenis.scrollTo(el, { offset: -24 });
+    } else {
+      window.scrollTo({ top: el.offsetTop - 24, behavior: "smooth" });
     }
     setIsOpen(false);
   };
 
   return (
-    <nav
-      className={`fixed w-full top-0 z-50 transition-all duration-500 ${
-        isOpen
-          ? "bg-[#030014] opacity-100"
-          : scrolled
-          ? "bg-[#030014]/50 backdrop-blur-xl"
-          : "bg-transparent"
-      }`}
+    <motion.header
+      initial={{ y: -40, opacity: 0 }}
+      animate={{
+        y: hidden && !isOpen ? -100 : 0,
+        opacity: 1,
+      }}
+      transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+      className="fixed top-3 sm:top-5 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-2xl"
     >
-      <div className="mx-auto px-4 sm:px-6 lg:px-[10%]">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
+      <div className="flex items-center justify-between gap-3 rounded-full bg-ink/90 backdrop-blur-xl border border-white/10 px-2 py-2 pl-5 shadow-[0_8px_30px_rgba(17,17,17,0.15)]">
+        <a
+          href="#home"
+          onClick={(e) => handleNavClick(e, "#home")}
+          className="text-cream font-semibold tracking-tight text-sm sm:text-base"
+        >
+          {PROFILE.shortName}
+        </a>
+
+        <nav className="hidden md:flex items-center gap-1">
+          {NAV_ITEMS.map((item) => (
             <a
-              href="#Home"
-              onClick={(e) => scrollToSection(e, "#Home")}
-              className="text-xl font-bold bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent"
-            >
-              Nischal
-            </a>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-8 flex items-center space-x-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => scrollToSection(e, item.href)}
-                  className="group relative px-1 py-2 text-sm font-medium"
-                >
-                  <span
-                    className={`relative z-10 transition-colors duration-300 ${
-                      activeSection === item.href.substring(1)
-                        ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
-                        : "text-[#e2d3fd] group-hover:text-white"
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-[#6366f1] to-[#a855f7] transform origin-left transition-transform duration-300 ${
-                      activeSection === item.href.substring(1)
-                        ? "scale-x-100"
-                        : "scale-x-0 group-hover:scale-x-100"
-                    }`}
-                  />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`relative p-2 text-[#e2d3fd] hover:text-white transition-transform duration-300 ease-in-out transform ${
-                isOpen ? "rotate-90 scale-125" : "rotate-0 scale-100"
+              key={item.href}
+              href={item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
+              className={`relative px-3 py-2 text-sm font-medium rounded-full transition-colors duration-300 ${
+                active === item.href.slice(1)
+                  ? "text-ink bg-cream"
+                  : "text-cream/70 hover:text-cream"
               }`}
             >
-              {isOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
-        </div>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <button
+          onClick={() => setIsOpen((v) => !v)}
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-cream/10 text-cream active:scale-95 transition-transform"
+          aria-label="Toggle menu"
+        >
+          {isOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      <div
-        className={`md:hidden h-2/5 fixed inset-0 bg-[#030014] transition-all duration-300 ease-in-out ${
-          isOpen
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-[-100%] pointer-events-none"
-        }`}
-        style={{ top: "64px" }}
-      >
-        <div className="flex flex-col h-full">
-          <div className="px-4 py-6 space-y-4 flex-1 ">
-            {navItems.map((item, index) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => scrollToSection(e, item.href)}
-                className={`block px-4 py-3 text-lg font-medium transition-all duration-300 ease ${
-                  activeSection === item.href.substring(1)
-                    ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"
-                    : "text-[#e2d3fd] hover:text-white"
-                }`}
-                style={{
-                  transitionDelay: `${index * 100}ms`,
-                  transform: isOpen ? "translateX(0)" : "translateX(50px)",
-                  opacity: isOpen ? 1 : 0,
-                }}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </nav>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -8, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+          className="md:hidden mt-2 rounded-3xl bg-ink/95 backdrop-blur-xl border border-white/10 p-2 shadow-[0_8px_30px_rgba(17,17,17,0.2)]"
+        >
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              onClick={(e) => handleNavClick(e, item.href)}
+              className={`block px-4 py-3 rounded-2xl text-sm font-medium transition-colors ${
+                active === item.href.slice(1)
+                  ? "text-ink bg-cream"
+                  : "text-cream/80 hover:text-cream hover:bg-white/5"
+              }`}
+            >
+              {item.label}
+            </a>
+          ))}
+        </motion.div>
+      )}
+    </motion.header>
   );
-};
-
-export default Navbar;
+}
