@@ -1,27 +1,22 @@
 "use client";
 
-import { forwardRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { PROFILE } from "@/lib/content";
 
 const FLOATING_SIZE_CLASS =
-  "h-[min(20svh,182px)] w-auto sm:h-[min(24svh,205px)] md:h-[min(28svh,251px)] xl:h-[456px] max-w-[min(42vw,400px)]";
+  "w-[min(42vw,160px)] sm:w-[min(42vw,180px)] md:w-[min(42vw,220px)] xl:w-[400px] [@media(max-height:700px)]:w-[min(32vw,130px)] [@media(max-height:600px)]:w-[min(28vw,100px)]";
 
-const HeroPhoto = forwardRef(function HeroPhoto(
-  {
-    rotateY,
-    rotateX,
-    scale,
-    fill = false,
-    className = "",
-    style = {},
-  },
-  ref
-) {
+export default function HeroPhoto({
+  rotateY,
+  rotateX,
+  scale,
+  fill = false,
+  className = "",
+  style = {},
+}) {
   return (
     <motion.div
-      ref={ref}
       style={{
         rotateY,
         rotateX,
@@ -32,7 +27,7 @@ const HeroPhoto = forwardRef(function HeroPhoto(
         fill ? "w-full h-full" : `${FLOATING_SIZE_CLASS} aspect-[400/456]`
       } ${className}`}
     >
-      <div className="absolute inset-0 rounded-[20px] overflow-hidden shadow-[0_20px_50px_rgba(17,17,17,0.22)] border border-black/5 [backface-visibility:hidden] max-[700px]:rounded-2xl max-[700px]:shadow-[0_12px_32px_rgba(17,17,17,0.18)]">
+      <div className="absolute inset-0 rounded-[20px] overflow-hidden shadow-[0_20px_50px_rgba(17,17,17,0.22)] border border-black/5 [backface-visibility:hidden]">
         <Image
           src={PROFILE.photo}
           alt={PROFILE.name}
@@ -43,7 +38,7 @@ const HeroPhoto = forwardRef(function HeroPhoto(
         />
       </div>
       <div
-        className="absolute inset-0 rounded-[20px] overflow-hidden shadow-[0_25px_60px_rgba(17,17,17,0.28)] border border-black/10 [backface-visibility:hidden] max-[700px]:rounded-2xl max-[700px]:shadow-[0_14px_36px_rgba(17,17,17,0.22)]"
+        className="absolute inset-0 rounded-[20px] overflow-hidden shadow-[0_25px_60px_rgba(17,17,17,0.28)] border border-black/10 [backface-visibility:hidden]"
         style={{ transform: "rotateY(180deg)" }}
       >
         <Image
@@ -57,6 +52,4 @@ const HeroPhoto = forwardRef(function HeroPhoto(
       </div>
     </motion.div>
   );
-});
-
-export default HeroPhoto;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Mail } from "lucide-react";
 import { PROFILE } from "@/lib/content";
@@ -10,15 +10,10 @@ import HeroSparkles from "./HeroSparkles";
 import HeroIntro from "./HeroIntro";
 import HeroPhoto from "./HeroPhoto";
 
-function subscribeNoop() {
-  return () => {};
-}
-
 export default function Hero() {
   const wrapperRef = useRef(null);
   const titleBottomRef = useRef(null);
   const photoEndRef = useRef(null);
-  const photoFloatRef = useRef(null);
 
   const {
     photoY,
@@ -28,12 +23,15 @@ export default function Hero() {
     measure,
     reduce,
     photoDocked,
-    scrollHeight,
-  } = useHeroScroll(wrapperRef, titleBottomRef, photoEndRef, photoFloatRef);
+  } = useHeroScroll(wrapperRef, titleBottomRef, photoEndRef);
 
-  const isClient = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [showFloatingPhoto, setShowFloatingPhoto] = useState(false);
 
   const { handleSectionClick } = useSectionScroll();
+
+  useLayoutEffect(() => {
+    setShowFloatingPhoto(true);
+  }, []);
 
   useEffect(() => {
     const t1 = setTimeout(measure, 50);
@@ -51,12 +49,11 @@ export default function Hero() {
   const bioRest = bioParts.slice(1).join(". ");
 
   return (
-    <section id="home" aria-label="Introduction">
-      <div ref={wrapperRef} className="relative" style={{ height: scrollHeight }}>
-        <div className="sticky top-0 h-svh w-full overflow-hidden pointer-events-none z-20 flex items-center justify-center [perspective:1200px] max-[700px]:[perspective:900px]">
-          {isClient && !photoDocked && (
+    <section id="home" aria-label="Introduction" className="relative z-10 bg-cream isolate">
+      <div ref={wrapperRef} className="relative min-h-[200vh]">
+        <div className="sticky top-0 h-screen w-full overflow-visible pointer-events-none z-20 flex items-center justify-center [perspective:1200px] [@media(max-height:700px)]:[perspective:900px] [@media(max-height:600px)]:[perspective:700px]">
+          {showFloatingPhoto && !photoDocked && (
             <HeroPhoto
-              ref={photoFloatRef}
               rotateY={photoRotateY}
               rotateX={photoRotateX}
               scale={photoScale}
@@ -65,8 +62,8 @@ export default function Hero() {
           )}
         </div>
 
-        <div className="relative z-10 -mt-svh">
-          <div className="relative min-h-svh flex flex-col items-center justify-center px-4 sm:px-8 max-[700px]:py-6">
+        <div className="relative z-10 -mt-[100vh]">
+          <div className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-8">
             <div className="relative w-full max-w-[1180px] mx-auto flex flex-col items-center">
               <div className="relative">
                 <HeroSparkles />
@@ -75,7 +72,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ type: "spring", bounce: 0, duration: 0.7, delay: 0.05 }}
-                    className="font-display font-bold uppercase text-ink text-[clamp(0.875rem,3.8vw,1.5rem)] tracking-[0.12em] mb-2 sm:mb-5 max-[700px]:mb-2"
+                    className="font-display font-bold uppercase text-ink text-[clamp(0.875rem,3.8vw,1.5rem)] tracking-[0.12em] mb-3 sm:mb-5"
                   >
                     Myself {PROFILE.name} !
                   </motion.p>
@@ -83,7 +80,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     transition={{ type: "spring", bounce: 0, duration: 0.8, delay: 0.1 }}
-                    className="font-display font-extrabold uppercase text-ink leading-[0.92] tracking-[-0.02em] text-center text-[clamp(2.25rem,11vw,10.875rem)] max-[700px]:text-[clamp(1.85rem,9.5vw,4.5rem)] max-w-full"
+                    className="font-display font-extrabold uppercase text-ink leading-[0.92] tracking-[-0.02em] text-center text-[clamp(2.25rem,11vw,10.875rem)] max-w-full"
                   >
                     Full Stack
                   </motion.h1>
@@ -91,7 +88,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 10, filter: "blur(2px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     transition={{ type: "spring", bounce: 0, duration: 0.8, delay: 0.22 }}
-                    className="font-display font-extrabold uppercase text-ink leading-[0.92] tracking-[-0.02em] text-center text-[clamp(2.25rem,11vw,10.875rem)] max-[700px]:text-[clamp(1.85rem,9.5vw,4.5rem)] max-w-full"
+                    className="font-display font-extrabold uppercase text-ink leading-[0.92] tracking-[-0.02em] text-center text-[clamp(2.25rem,11vw,10.875rem)] max-w-full"
                   >
                     Developer
                   </motion.h1>
@@ -104,7 +101,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", bounce: 0, duration: 1.6, delay: 1.4 }}
-              className="absolute inset-x-0 bottom-4 sm:bottom-8 px-6 sm:px-12 lg:px-16 flex items-end justify-between max-w-[1180px] mx-auto w-full gap-4 max-[700px]:bottom-3"
+              className="absolute inset-x-0 bottom-5 sm:bottom-8 px-6 sm:px-12 lg:px-16 flex items-end justify-between max-w-[1180px] mx-auto w-full gap-4"
             >
               <span className="font-display font-semibold text-3xl sm:text-5xl lg:text-[68px] text-ink leading-none tracking-tight">
                 &copy;2026
@@ -114,7 +111,7 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            <div className="absolute top-16 sm:top-28 right-4 sm:right-12 lg:right-16 flex flex-col gap-2 z-30 max-[700px]:top-14">
+            <div className="absolute top-20 sm:top-28 right-4 sm:right-12 lg:right-16 flex flex-col gap-2 z-30">
               <a
                 href="#projects"
                 onClick={(e) => handleSectionClick(e, "#projects")}
@@ -136,9 +133,9 @@ export default function Hero() {
 
           <div
             id="bio"
-            className="relative min-h-svh flex items-center px-4 sm:px-10 lg:px-14 pt-12 sm:pt-24 lg:pt-0 pb-16 sm:pb-24 max-[700px]:pt-10 max-[700px]:pb-14"
+            className="relative flex items-center px-4 sm:px-10 lg:px-14 pt-12 sm:pt-20 lg:pt-0 pb-32 sm:pb-40 lg:pb-24 max-lg:min-h-0 lg:min-h-screen [@media(max-height:700px)]:pt-10 [@media(max-height:700px)]:pb-36"
           >
-            <div className="w-full max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px_1fr] gap-x-10 gap-y-8 lg:gap-y-0 items-center max-[700px]:gap-y-6">
+            <div className="w-full max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px_1fr] gap-x-10 gap-y-12 sm:gap-y-14 lg:gap-y-0 items-center">
               <div className="flex flex-col gap-4 sm:gap-5 text-center lg:text-left order-1">
                 <h2 className="font-display font-semibold text-ink text-[clamp(2.5rem,8vw,4.75rem)] leading-none tracking-tight">
                   Hey!
@@ -147,11 +144,11 @@ export default function Hero() {
               </div>
 
               <div
-                className="order-2 flex justify-center items-center mx-auto w-full max-w-[min(36vw,160px)] sm:max-w-[220px] lg:max-w-[400px] max-[700px]:max-w-[min(32vw,140px)]"
+                className="order-2 flex justify-center items-center mx-auto w-full max-w-[min(42vw,180px)] sm:max-w-[220px] lg:max-w-[400px] [@media(max-height:700px)]:max-w-[130px] [@media(max-height:600px)]:max-w-[100px]"
               >
                 <div
                   ref={photoEndRef}
-                  className="w-full aspect-[400/456] relative flex items-center justify-center [perspective:1200px]"
+                  className="w-full aspect-[400/456] relative flex items-center justify-center [perspective:1200px] [@media(max-height:700px)]:[perspective:900px] [@media(max-height:600px)]:[perspective:700px]"
                   aria-hidden={!photoDocked}
                 >
                   {photoDocked && (

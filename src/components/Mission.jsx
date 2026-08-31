@@ -24,9 +24,9 @@ export default function Mission() {
   const words = PROFILE.mission.split(" ");
 
   return (
-    <section id="mission" ref={wrapperRef} className="relative h-[220vh]">
-      <div className="sticky top-0 h-screen flex items-center justify-center px-6 sm:px-10 lg:px-14">
-        <p className="font-display font-semibold text-[6.5vw] sm:text-[4vw] lg:text-[3rem] xl:text-[3.4rem] leading-[1.12] tracking-tight max-w-[900px] text-center">
+    <section id="mission" ref={wrapperRef} className="relative z-0 h-[220vh] max-lg:pt-12 max-lg:h-[200vh]">
+      <div className="sticky top-0 h-screen flex items-center justify-center px-6 sm:px-10 lg:px-14 max-lg:pt-4">
+        <p className="font-display font-semibold text-[6.5vw] sm:text-[4vw] lg:text-[3rem] xl:text-[3.4rem] leading-[1.12] tracking-tight max-w-[900px] text-center max-lg:px-2">
           {words.map((word, i) => {
             const start = i / words.length;
             const end = (i + 1) / words.length;

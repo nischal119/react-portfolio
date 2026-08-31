@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import {
   useMotionValue,
   useMotionValueEvent,
@@ -17,94 +10,84 @@ import {
 } from "framer-motion";
 
 const PHOTO_ASPECT = 456 / 400;
+const PHOTO_START_GAP = 24;
+const PHOTO_START_SCALE = 0.55;
+const SCROLL_ANIM_END = 0.72;
+const DOCK_AT = 0.72;
 
-const DEFAULT_ANIM = {
-  scrollEnd: 0.72,
-  dockAt: 0.72,
-  startScale: 0.55,
-  startGap: 24,
-  maxRotateX: 16,
-  flipIn: [0.1, 0.35],
-  flipHold: [0.35, 0.48],
-  flipOut: [0.48, 0.72],
-};
+const PHOTO_SIZE_DEFAULT = { w: 160, h: Math.round(160 * PHOTO_ASPECT) };
 
-function getViewportMetrics() {
-  if (typeof window === "undefined") {
-    return { vw: 390, vh: 700, isShort: true, isVeryShort: false };
+function getViewportHeight() {
+  if (typeof window === "undefined") return 800;
+  return window.innerHeight;
+}
+
+function isShortViewport(vh = getViewportHeight()) {
+  return vh <= 700;
+}
+
+function isVeryShortViewport(vh = getViewportHeight()) {
+  return vh <= 600;
+}
+
+function getHeroAnimationConfig(vh = getViewportHeight()) {
+  if (isVeryShortViewport(vh)) {
+    return {
+      startScale: 0.42,
+      startGap: 10,
+      scrollEnd: 0.66,
+      dockAt: 0.66,
+      maxRotateX: 6,
+      flipPhase1: 0.08,
+      flipPhase2: 0.3,
+      flipPhase3: 0.44,
+    };
   }
 
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  if (isShortViewport(vh)) {
+    return {
+      startScale: 0.48,
+      startGap: 14,
+      scrollEnd: 0.69,
+      dockAt: 0.69,
+      maxRotateX: 10,
+      flipPhase1: 0.09,
+      flipPhase2: 0.32,
+      flipPhase3: 0.46,
+    };
+  }
 
   return {
-    vw,
-    vh,
-    isShort: vh < 700,
-    isVeryShort: vh < 580,
+    startScale: PHOTO_START_SCALE,
+    startGap: PHOTO_START_GAP,
+    scrollEnd: SCROLL_ANIM_END,
+    dockAt: DOCK_AT,
+    maxRotateX: 16,
+    flipPhase1: 0.1,
+    flipPhase2: 0.35,
+    flipPhase3: 0.48,
   };
 }
 
-function getScrollHeight(metrics = getViewportMetrics()) {
-  if (metrics.isVeryShort) return "175vh";
-  if (metrics.isShort) return "185vh";
-  return "200vh";
-}
+function getPhotoSize() {
+  if (typeof window === "undefined") return PHOTO_SIZE_DEFAULT;
 
-function subscribeToViewport(onStoreChange) {
-  window.addEventListener("resize", onStoreChange);
-  return () => window.removeEventListener("resize", onStoreChange);
-}
-
-function getAnimConfig(metrics = getViewportMetrics()) {
-  if (metrics.isVeryShort) {
-    return {
-      scrollEnd: 0.66,
-      dockAt: 0.66,
-      startScale: 0.48,
-      startGap: 10,
-      maxRotateX: 6,
-      flipIn: [0.08, 0.28],
-      flipHold: [0.28, 0.4],
-      flipOut: [0.4, 0.66],
-    };
-  }
-
-  if (metrics.isShort) {
-    return {
-      scrollEnd: 0.7,
-      dockAt: 0.7,
-      startScale: 0.52,
-      startGap: 14,
-      maxRotateX: 10,
-      flipIn: [0.09, 0.32],
-      flipHold: [0.32, 0.44],
-      flipOut: [0.44, 0.7],
-    };
-  }
-
-  return DEFAULT_ANIM;
-}
-
-function getPhotoSize(metrics = getViewportMetrics()) {
-  const { vw, vh, isShort, isVeryShort } = metrics;
-
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
   let w;
+
   if (vw >= 1280) w = 400;
   else if (vw >= 810) w = 220;
   else if (vw >= 640) w = 180;
   else w = Math.round(Math.min(160, vw * 0.4));
 
-  const maxHeightRatio = isVeryShort ? 0.2 : isShort ? 0.24 : 0.34;
-  const maxH = Math.round(vh * maxHeightRatio);
-  let h = Math.round(w * PHOTO_ASPECT);
-
-  if (h > maxH) {
-    h = maxH;
-    w = Math.round(h / PHOTO_ASPECT);
+  if (isVeryShortViewport(vh)) {
+    w = Math.min(w, Math.round(vh * 0.22), 110);
+  } else if (isShortViewport(vh)) {
+    w = Math.min(w, Math.round(vh * 0.26), 140);
   }
 
-  return { w, h };
+  return { w, h: Math.round(w * PHOTO_ASPECT) };
 }
 
 function clamp(value, min, max) {
@@ -118,20 +101,9 @@ function lerpRange(progress, inputRange, outputRange) {
   return outMin + (outMax - outMin) * t;
 }
 
-export function useHeroScroll(
-  wrapperRef,
-  titleBottomRef,
-  photoEndRef,
-  photoFloatRef
-) {
+export function useHeroScroll(wrapperRef, titleBottomRef, photoEndRef) {
   const reduce = useReducedMotion();
-  const animRef = useRef(DEFAULT_ANIM);
   const [photoDocked, setPhotoDocked] = useState(reduce);
-  const scrollHeight = useSyncExternalStore(
-    subscribeToViewport,
-    () => getScrollHeight(getViewportMetrics()),
-    () => "200vh"
-  );
   const photoStartY = useMotionValue(120);
   const photoEndY = useMotionValue(0);
 
@@ -139,24 +111,21 @@ export function useHeroScroll(
     if (typeof window === "undefined") return;
     if (!titleBottomRef.current || !photoEndRef.current) return;
 
-    const metrics = getViewportMetrics();
-    animRef.current = getAnimConfig(metrics);
-    const anim = animRef.current;
-
-    const measuredH = photoFloatRef?.current?.getBoundingClientRect().height;
-    const photoH = measuredH && measuredH > 0 ? measuredH : getPhotoSize(metrics).h;
+    const { h: photoH } = getPhotoSize();
+    const { startScale, startGap } = getHeroAnimationConfig();
     const viewportCenter = window.innerHeight / 2;
     const titleRect = titleBottomRef.current.getBoundingClientRect();
     const endRect = photoEndRef.current.getBoundingClientRect();
 
-    const photoHalfAtStart = (photoH * anim.startScale) / 2;
-    const photoCenterAtStart = titleRect.bottom + anim.startGap + photoHalfAtStart;
+    const photoHalfAtStart = (photoH * startScale) / 2;
+    const photoCenterAtStart =
+      titleRect.bottom + startGap + photoHalfAtStart;
     const startY = photoCenterAtStart - viewportCenter;
     const endY = endRect.top + endRect.height / 2 - viewportCenter;
 
     photoStartY.set(startY);
     photoEndY.set(endY);
-  }, [titleBottomRef, photoEndRef, photoFloatRef, photoStartY, photoEndY]);
+  }, [titleBottomRef, photoEndRef, photoStartY, photoEndY]);
 
   const measure = useCallback(() => {
     measurePositions();
@@ -190,40 +159,43 @@ export function useHeroScroll(
       setPhotoDocked(true);
       return;
     }
-    setPhotoDocked(v >= animRef.current.dockAt);
+    const { dockAt } = getHeroAnimationConfig();
+    setPhotoDocked(v >= dockAt);
   });
 
   const photoY = useTransform(
     [scrollYProgress, photoStartY, photoEndY],
     ([v, start, end]) => {
       if (reduce) return end;
-      const { scrollEnd } = animRef.current;
+      const { scrollEnd } = getHeroAnimationConfig();
       return lerpRange(v, [0, scrollEnd], [start, end]);
-    }
+    },
   );
 
   const photoScale = useTransform(scrollYProgress, (v) => {
     if (reduce) return 1;
-    const { scrollEnd, startScale } = animRef.current;
+    const { startScale, scrollEnd } = getHeroAnimationConfig();
     return lerpRange(v, [0, scrollEnd], [startScale, 1]);
   });
 
   const photoRotateY = useTransform(scrollYProgress, (v) => {
     if (reduce) return 180;
-    const { flipIn, flipHold, flipOut } = animRef.current;
-    if (v <= flipIn[0]) return 0;
-    if (v <= flipIn[1]) return lerpRange(v, flipIn, [0, 90]);
-    if (v <= flipHold[1]) return 90;
-    if (v <= flipOut[1]) return lerpRange(v, flipOut, [90, 180]);
+    const { scrollEnd, flipPhase1, flipPhase2, flipPhase3 } =
+      getHeroAnimationConfig();
+    if (v <= flipPhase1) return 0;
+    if (v <= flipPhase2) return lerpRange(v, [flipPhase1, flipPhase2], [0, 90]);
+    if (v <= flipPhase3) return 90;
+    if (v <= scrollEnd) return lerpRange(v, [flipPhase3, scrollEnd], [90, 180]);
     return 180;
   });
 
   const photoRotateX = useTransform(scrollYProgress, (v) => {
     if (reduce) return 0;
-    const { flipIn, flipOut, maxRotateX } = animRef.current;
-    if (v <= flipIn[0]) return 0;
-    if (v <= flipIn[1]) return lerpRange(v, flipIn, [0, maxRotateX]);
-    if (v <= flipOut[1]) return lerpRange(v, [flipIn[1], flipOut[1]], [maxRotateX, 0]);
+    const { scrollEnd, flipPhase1, flipPhase2, maxRotateX } =
+      getHeroAnimationConfig();
+    if (v <= flipPhase1) return 0;
+    if (v <= flipPhase2) return lerpRange(v, [flipPhase1, flipPhase2], [0, maxRotateX]);
+    if (v <= scrollEnd) return lerpRange(v, [flipPhase2, scrollEnd], [maxRotateX, 0]);
     return 0;
   });
 
@@ -235,6 +207,5 @@ export function useHeroScroll(
     measure,
     reduce,
     photoDocked,
-    scrollHeight,
   };
 }
