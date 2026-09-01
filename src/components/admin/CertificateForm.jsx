@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import ImageUpload from "./ImageUpload";
 
 export default function CertificateForm({ certificate, onSubmit, onCancel, loading }) {
   const isEditing = Boolean(certificate);
@@ -58,29 +59,12 @@ export default function CertificateForm({ certificate, onSubmit, onCancel, loadi
               )}
             </div>
 
-            <div className="admin-field">
-              <label className="admin-label" htmlFor="cert-img">
-                Image URL
-              </label>
-              <input
-                id="cert-img"
-                className="admin-input"
-                value={img}
-                onChange={(e) => setImg(e.target.value)}
-                placeholder="https://example.com/certificate.jpg"
-                disabled={loading}
-              />
-              {img && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={img}
-                  alt="Preview"
-                  className="admin-img-preview"
-                  onError={(e) => { e.target.style.display = "none"; }}
-                  onLoad={(e) => { e.target.style.display = "block"; }}
-                />
-              )}
-            </div>
+            <ImageUpload
+              value={img}
+              onChange={setImg}
+              folder="certificates"
+              disabled={loading}
+            />
           </div>
 
           <div className="admin-modal__footer">

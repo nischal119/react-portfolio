@@ -1,6 +1,7 @@
 "use client";
 
 import { usePortfolioData } from "@/hooks/usePortfolioData";
+import { usePageView } from "@/hooks/usePageView";
 import SmoothScroll from "./SmoothScroll";
 import ScrollProgress from "./ScrollProgress";
 import BackToTop from "./BackToTop";
@@ -15,6 +16,7 @@ import Footer from "./Footer";
 
 export default function PageClient() {
   const { projects, certificates, status } = usePortfolioData();
+  usePageView();
 
   return (
     <SmoothScroll>

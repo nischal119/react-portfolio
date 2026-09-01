@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { addContactSubmission } from "@/lib/firebase";
 
 const CONTACT_EMAIL = "dhungeln12@gmail.com";
 const MIN_SUBMIT_MS = 3000;
@@ -75,6 +76,18 @@ export async function POST(request) {
         { error: "Failed to send message. Please try again." },
         { status: 502 }
       );
+    }
+
+    // Also save to Firestore for admin panel viewing
+    try {
+      await addContactSubmission({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        message: message.trim(),
+      });
+    } catch {
+      // Don't fail the response if Firestore write fails
     }
 
     return NextResponse.json({ success: true });

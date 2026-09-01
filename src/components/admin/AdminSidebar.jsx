@@ -1,17 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FolderKanban, Award, X } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Award, MessageSquare, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/certificates", label: "Certificates", icon: Award },
+  { href: "/admin/contacts", label: "Contacts", icon: MessageSquare, badge: true },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }) {
   const pathname = usePathname();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    fetch("/api/admin/contacts")
+      .then((r) => r.json())
+      .then((data) => {
+        const unread = (data.contacts || []).filter((c) => !c.read).length;
+        setUnreadCount(unread);
+      })
+      .catch(() => {});
+  }, [pathname]); // refetch on navigation
 
   function isActive(item) {
     if (item.exact) return pathname === item.href;
@@ -23,7 +36,6 @@ export default function AdminSidebar({ isOpen, onClose }) {
       <div className="admin-sidebar__brand">
         <div className="admin-sidebar__brand-icon">N</div>
         <span className="admin-sidebar__brand-text">Portfolio Admin</span>
-        {/* Mobile close */}
         <button
           className="admin-btn admin-btn--ghost"
           onClick={onClose}
@@ -46,6 +58,9 @@ export default function AdminSidebar({ isOpen, onClose }) {
           >
             <item.icon size={18} />
             {item.label}
+            {item.badge && unreadCount > 0 && (
+              <span className="admin-badge">{unreadCount}</span>
+            )}
           </Link>
         ))}
       </nav>

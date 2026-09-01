@@ -7,6 +7,7 @@ const PAGE_TITLES = {
   "/admin": "Dashboard",
   "/admin/projects": "Projects",
   "/admin/certificates": "Certificates",
+  "/admin/contacts": "Contact Submissions",
 };
 
 export default function AdminHeader({ onToggleSidebar, onLogout }) {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { X, Image as ImageIcon } from "lucide-react";
+import { X } from "lucide-react";
+import ImageUpload from "./ImageUpload";
 
 export default function ProjectForm({ project, onSubmit, onCancel, loading }) {
   const isEditing = Boolean(project);
@@ -97,29 +98,12 @@ export default function ProjectForm({ project, onSubmit, onCancel, loading }) {
               />
             </div>
 
-            <div className="admin-field">
-              <label className="admin-label" htmlFor="proj-img">
-                Image URL
-              </label>
-              <input
-                id="proj-img"
-                className="admin-input"
-                value={img}
-                onChange={(e) => setImg(e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                disabled={loading}
-              />
-              {img && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={img}
-                  alt="Preview"
-                  className="admin-img-preview"
-                  onError={(e) => { e.target.style.display = "none"; }}
-                  onLoad={(e) => { e.target.style.display = "block"; }}
-                />
-              )}
-            </div>
+            <ImageUpload
+              value={img}
+              onChange={setImg}
+              folder="projects"
+              disabled={loading}
+            />
 
             <div className="admin-field">
               <label className="admin-label" htmlFor="proj-link">
